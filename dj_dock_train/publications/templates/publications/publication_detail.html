@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+    <a href="{% url 'publications:publication-list' %}">Go back to publications</a>
+    <hr />
+    <h1>This is the details of " {{ publication.title }} "</h1>
+    <p>{{ publication.content }}</p>
+    <p>Likes: {{ publication.likes}}</p>
+    <p>Dislikes: {{ publication.dislikes}}</p>
+    <hr />
+{% endblock content %}

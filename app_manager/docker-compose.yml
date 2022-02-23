@@ -1,0 +1,16 @@
+version: '3.4'  
+services:
+  am-service:
+    build: .
+    image: app-manager:latest
+    hostname: app-manager
+    container_name: app-manager
+    volumes:
+      - .:/app_manager
+    ports:
+      - 5005:5005
+    environment:
+      - AM_INIT_PORT=5005
+      - AM_HOSTNAME=app-manager
+      - DOCKER_API_URL=172.17.0.1 # ip address of host that is running this docker-compose
+      - DOCKER_API_PORT=5555 # port of remote docker api exposed by host
