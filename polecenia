@@ -1,0 +1,106 @@
+#APP MANAGER
+
+#BUILD BASE APP IMAGE
+docker build -t base-app .
+
+docker run -it -d -p 8000:8000 --name app_1_8000 base-app
+
+docker exec -it app_1_8000 bash
+
+python3 manage.py runserver 0.0.0.0:8000
+
+#BUILD AM
+docker build -t app-manager:latest .
+
+docker-compose up -d
+
+#Check
+
+python3 app_manager.py
+
+localhost
+curl -X GET http://localhost:5005/app-manager/list 
+
+curl -X GET http://0.0.0.0:5005/app-manager/list 
+
+curl -X POST http://0.0.0.0:5005/app-manager/add/6/5006
+curl -X POST http://0.0.0.0:5005/app-manager/add/7/5007
+curl -X POST http://0.0.0.0:5005/app-manager/add/8/5008
+
+curl -X DELETE http://0.0.0.0:5005/app-manager/delete/7
+
+
+docker exec -it app_6_5006 bash
+
+python manage.py migrate
+python3 manage.py runserver 0.0.0.0:5006
+
+#Hello world
+
+#build image
+docker build -t hello .
+
+#run container
+docker run -it hello
+||
+docker run -it --name hello_container hello
+
+
+#Postgres database
+
+docker run -d \
+    --name postgres_container \
+    -e POSTGRES_PASSWORD=postgres \
+    -e POSTGRES_USER=postgres \
+    -e POSTGRES_DB=my_db \
+    -p 5434:5432 \
+    postgres
+
+
+docker rm -rf db
+
+docker run -d \
+    --name postgres_container \
+    -e POSTGRES_PASSWORD=postgres \
+    -e POSTGRES_USER=postgres \
+    -e POSTGRES_DB=my_db \
+    -v ~/ind_proj/db:/var/lib/postgresql/data \
+    -p 5434:5432 \
+    postgres
+    
+
+docker exec -i -t postgres_container /bin/bash
+psql -U postgres -d my_db
+\dt
+
+CREATE TABLE users( user_id serial PRIMARY KEY, username VARCHAR ( 50 ) UNIQUE NOT NULL,email VARCHAR ( 255 ) UNIQUE NOT NULL);
+
+INSERT into users(user_id, username,email) VALUES (1, 'ala', 'mail');
+INSERT into users(user_id, username,email) VALUES (2, 'kot', 'kot@gmail.com');
+
+
+docker stop postgres_container
+docker start postgres_container
+
+docker rm postgres_container
+
+
+#APP
+
+
+#build image
+docker build -t app_py .
+
+#run docker-compose
+docker-compose up
+
+BASE=""
+
+docker exec -i -t app_py /bin/bash
+
+curl -X POST -d "name=ala&email=mail" http://0.0.0.0:5005/app/add
+curl -X POST -d "name=kot&email=gmail" http://0.0.0.0:5005/app/add
+
+curl -X GET  http://0.0.0.0:5005/app/get/1
+
+curl -X DELETE  http://0.0.0.0:5005/app/delete/1
